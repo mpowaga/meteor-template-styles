@@ -40,6 +40,28 @@ Template.hello.events({
 })
 ```
 
+##Stoping computation##
+
+`computation` object is passed to every function call.
+
+e.g.
+
+```
+Template.hello.styles({
+  'button': function(computation) {
+    var counter = Session.get('counter');
+
+    if (counter > 30) {
+      return computation.stop();
+    }
+
+    return {
+      fontSize: counter + 10 + 'px'
+    };
+  }
+});
+```
+
 ##Details##
 
 `styles` function takes an object which keys are valid css selectors. Value of this object should be a function that returns an object with css attribute-value pairs. It can be also an object which keys are css attributes and value is specified as function that returns css value. Alternatively you can create an array of both.

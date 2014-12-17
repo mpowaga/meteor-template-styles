@@ -27,8 +27,8 @@ function cssFromValue(tmpl, selector, value) {
 
 function cssFromFunction(tmpl, selector, value) {
   var previous = {};
-  tmpl.autorun(function() {
-    var style = value() || {};
+  tmpl.autorun(function(computation) {
+    var style = value(computation) || {};
     var difference = _.difference(_.keys(previous), _.keys(style));
     var removed = _.reduce(difference, function(atts, attr) {
       atts[attr] = '';
@@ -44,8 +44,8 @@ function cssFromFunction(tmpl, selector, value) {
 
 function cssFromObject(tmpl, selector, value) {
   _.each(value, function(value, attribute) {
-    tmpl.autorun(function() {
-      var style = value();
+    tmpl.autorun(function(computation) {
+      var style = value(computation);
       tmpl.$(selector).css(attribute, style || '');
     });
   });
