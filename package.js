@@ -1,7 +1,7 @@
 Package.describe({
   name: 'mpowaga:template-styles',
   summary: 'Reactive css for meteor templates',
-  version: '0.1.0',
+  version: '0.1.1',
   git: 'https://github.com/mpowaga/meteor-template-styles'
 });
 
