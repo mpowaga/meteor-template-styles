@@ -1,43 +1,52 @@
 Template.prototype.styles = function(def) {
   this.hooks({
-    rendered: function(instance) {
-      var atts = {};
-      _.each(def, function(value, selector) {
-        atts[selector] = {};
-      });
+    rendered: function() {
+      initStyles.apply(this, [def]);
+    }
+  });
+};
 
-      _.each(def, function(value, selector) {
-        if (typeof value == 'function') {
-          this.autorun(function() {
-            var style = value();
-            if (! _.isObject(style)) {
-              style = {};
-            }
+function initStyles(def) {
+  _.each(def, function(value, selector) {
+    var values = _.isArray(value) ? value : [value];
+    _.each(values, function(value) {
+      cssFromValue(this, selector, value);
+    }, this);
+  }, this);
+};
 
-            var removed = _.difference(_.keys(atts[selector]), _.keys(style));
+function cssFromValue(tmpl, selector, value) {
+  if (_.isFunction(value)) {
+    cssFromFunction(tmpl, selector, value);
+  } else if (_.isObject(value)) {
+    cssFromObject(tmpl, selector, value);
+  } else {
+    throw new Error('Object should be either function or string');
+  }
+}
 
-            var cssAtts = _.extend(style, _.reduce(removed, function(atts, attr) {
-              atts[attr] = '';
-              return atts;
-            }, {}));
+function cssFromFunction(tmpl, selector, value) {
+  var previous = {};
+  tmpl.autorun(function() {
+    var style = value() || {};
+    var difference = _.difference(_.keys(previous), _.keys(style));
+    var removed = _.reduce(difference, function(atts, attr) {
+      atts[attr] = '';
+      return atts;
+    }, {});
 
-            this.$(selector).css(cssAtts);
+    var atts = _.extend(style, removed);
+    tmpl.$(selector).css(atts);
 
-            atts[selector] = style;
-          }.bind(this));
-        } else {
-          _.each(value, function(attribute, key) {
-            this.autorun(function() {
-              var style = attribute();
-              if (! style) {
-                style = '';
-              }
+    previous = style;
+  });
+};
 
-              this.$(selector).css(key, style);
-            }.bind(this));
-          }, this);
-        }
-      }, this);
-    },
+function cssFromObject(tmpl, selector, value) {
+  _.each(value, function(value, attribute) {
+    tmpl.autorun(function() {
+      var style = value();
+      tmpl.$(selector).css(attribute, style || '');
+    });
   });
 };
