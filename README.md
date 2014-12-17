@@ -22,15 +22,15 @@ meteor add mpowaga:template-styles
 Template.hello.styles({
   '.message': function() {
     var counter = Session.get('counter');
-    var style = {
-      fontSize: (10 + counter) + 'px'
-    };
-
-    if (style % 2 == 0) {
-      style.color = 'red';
+    if (counter % 2 == 0) {
+      return { color: 'red' };
     }
+  },
 
-    return style;
+  'button': {
+    fontSize: function() {
+      return (Session.get('counter') + 10) + 'px';
+    }
   }
 });
 
@@ -43,4 +43,4 @@ Template.hello.events({
 
 ##Details##
 
-`styles` function takes an object which keys are valid css selectors and value is a function which returns object with css attributes accepted by [jquery.css](http://api.jquery.com/css/#css-properties) method.
+`styles` function takes an object which keys are valid css selectors. Value of this object must be a function that returns an object with css attribute-value pairs. Alternatively it can be object which keys are css attributes and value is specified as function that returns css value. Attribute names and values will be passed to [jquery.css](http://api.jquery.com/css/#css-properties) method.
