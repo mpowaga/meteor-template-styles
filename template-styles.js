@@ -6,8 +6,8 @@ Template.prototype.styles = function(def) {
         atts[selector] = {};
       });
 
-      this.autorun(function() {
-        _.each(def, function(value, selector) {
+      _.each(def, function(value, selector) {
+        this.autorun(function() {
           var style = value();
           var removed = _.difference(_.keys(atts[selector]), _.keys(style));
 
@@ -19,8 +19,8 @@ Template.prototype.styles = function(def) {
           this.$(selector).css(cssAtts);
 
           atts[selector] = style;
-        }, this);
-      }.bind(this));
+        }.bind(this));
+      }, this);
     }
   });
 };
